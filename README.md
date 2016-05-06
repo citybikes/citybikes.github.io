@@ -1,7 +1,15 @@
-# helometer
+# Helsinki city bikes
 
-How far to the nearest station?
+How many Helsinki city bikes are at the nearest station?
 
-If you know the city well, you already know *where* the stations are. But which is *closest* (as the crow flies) to where you are now?
+No map, because you probably already know where they are anyway.
 
-https://hugovk.github.io/helometer
+https://citybikes.github.io
+
+If you want to use it from a fixed-location computer, just add coords:
+
+https://citybikes.github.io/?lat=60.168333&lon=24.95625
+
+---
+
+See also https://hugovk.github.io/helometer
