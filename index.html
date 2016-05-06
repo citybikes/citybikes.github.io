@@ -2,34 +2,24 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Helometer</title>
-<meta name="description" content="How far to the nearest station?">
+<title>Helcitybikometer</title>
+<meta name="description" content="How far to the nearest Helsinki city bike station?">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="citybikes.css">
 <link rel="shortcut icon" href="favicon.ico">
-<script src='jquery-1.11.2.min.js'></script>
-<script src="jquery.textfill.min.js"></script>
-<script type="text/javascript">
-<!--
-$(document).ready(function() {
-  $('#textfill-container').textfill({maxFontPixels: 0});
-});
-$(window).resize(function() {
-  $('#textfill-container').textfill({maxFontPixels: 0});
-});
--->
-</script>
 </head>
 <body>
 
-  <div id="textfill-container">
-  <span id="cities">
-      <a href="helmetrometer.html">Helmetrometer</a><br>
-      <a href="heltrainometer.html">Heltrainometer</a><br>
-      <a href="helmetrainometer.html">Helmetrainometer</a><br>
-      <a href="helcitybikometer.html">Helcitybikometer</a><br>
-      <a href="londometer.html">Londometer</a>
-    </span>
+  <h1><span id="live-geolocation">Checking...</span></h1>
+
+  <div>
+    <ul id="metro-list"></ul>
   </div>
+
+<script src="jquery-1.11.2.min.js"></script>
+<script src="geoPosition.js"></script>
+<script src="geoUtils.js"></script>
+<script src="citybikes.js"></script>
 
 </body>
 </html>
