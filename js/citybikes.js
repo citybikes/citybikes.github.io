@@ -119,7 +119,6 @@ $(document).ready(function() {
       else if (getURLParameter('name') !== 'null') {
         var name = getURLParameter('name').toLowerCase();
         $.each(data.stations, function(key, val) {
-          console.log(name, val.name);
           // If substring found
           if (val.name.toLowerCase().indexOf(name) > -1) {
             var loc = {
