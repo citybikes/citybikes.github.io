@@ -1,7 +1,9 @@
 function getURLParameter(name) {
-  return decodeURI(
+  var param = decodeURI(
     (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
   );
+  // Strip any trailing slash
+  return param.replace(/\/$/, '');
 }
 
 function distanceBetweenLocAndStation(loc, station) {
@@ -96,6 +98,22 @@ $(document).ready(function() {
           }
         }
         ShowClosest(loc);
+      }
+      // Do we have an ID parameter?
+      else if (getURLParameter('id') !== 'null') {
+        var id = getURLParameter('id').toUpperCase();
+        $.each(data.stations, function(key, val) {
+          if (val.id === id) {
+            var loc = {
+              coords: {
+                latitude: val.y,
+                longitude: val.x
+              }
+            }
+            ShowClosest(loc);
+            return false;
+          }
+        });
       }
       // Otherwise boot up the satellites
       else if (geoPosition.init()) {

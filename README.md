@@ -10,6 +10,10 @@ If you want to use it from a fixed-location computer, just add coords:
 
 https://citybikes.github.io/?lat=60.168333&lon=24.95625
 
+Or the ID of a station:
+
+https://citybikes.github.io/?id=A23
+
 ---
 
 See also https://hugovk.github.io/helometer
