@@ -115,6 +115,24 @@ $(document).ready(function() {
           }
         });
       }
+      // Do we have a name parameter?
+      else if (getURLParameter('name') !== 'null') {
+        var name = getURLParameter('name').toLowerCase();
+        $.each(data.stations, function(key, val) {
+          console.log(name, val.name);
+          // If substring found
+          if (val.name.toLowerCase().indexOf(name) > -1) {
+            var loc = {
+              coords: {
+                latitude: val.y,
+                longitude: val.x
+              }
+            }
+            ShowClosest(loc);
+            return false;
+          }
+        });
+      }
       // Otherwise boot up the satellites
       else if (geoPosition.init()) {
         $("#live-geolocation").html('Checking...');
