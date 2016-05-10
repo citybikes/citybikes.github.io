@@ -6,7 +6,7 @@ No map, because you probably already know where they are anyway.
 
 https://citybikes.github.io
 
-If you want to use it from a fixed location, use the name or ID of a station or coords:
+If you want to use it from a fixed location, use the name (or part of a name, case-insensitive) or [ID](https://citybikes.github.io/stations.txt) of a station or lat/lon coordinates:
 
  * https://citybikes.github.io/?name=rautatientori
  * https://citybikes.github.io/?id=A23
