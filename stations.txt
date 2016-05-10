@@ -1,0 +1,46 @@
+A01 Kaivopuisto
+A02 Laivasillankatu
+A03 Kapteeninpuistikko
+A05 Sepänkatu
+A06 Viiskulma
+A07 Designmuseo
+A09 Vanha kirkkopuisto
+A10 Erottaja
+A11 Kasarmitori
+A12 Unioninkatu
+A13 Kauppatori
+A14 Kanavaranta
+A15 Mastokatu
+A16 Merisotilaantori
+A17 Liisanpuistikko
+A18 Ritarikatu
+A19 Senaatintori
+A21 Varsapuistikko
+A22 Kaisaniemenpuisto
+A23 Rautatientori / itä
+A24 Rautatientori / länsi
+A25 Töölönlahdenkatu
+A26 Kiasma
+A27 Mannerheimintie
+A28 Eerikinkatu
+A29 Narinkka
+A30 Kampin metroasema
+A31 Eläinmuseo
+A32 Kansallismuseo
+A33 Töölönkatu
+A34 Museokatu
+A35 Apollonkatu
+A38 Kauppakorkeakoulu
+A40 Lastenlehto
+A41 Hietalahdentori
+A42 Baana
+A49 Itämerentori
+B01 Hakaniemen metroasema
+B02 Ympyrätalo
+B03 Haapaniemenkatu
+B04 Karhupuisto
+B05 Linnanmäki
+B07 Brahen kenttä
+B08 Sörnäisten metroasema
+C01 Töölöntori
+C02 Ooppera
