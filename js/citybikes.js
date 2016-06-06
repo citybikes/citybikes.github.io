@@ -18,7 +18,7 @@ function ShowClosest(loc) {
 
   // Load stations from API
   $.ajax({
-    url: "https://dev.hsl.fi/matka.hsl.fi/otp/routers/hsl/bike_rental",
+    url: "https://api.digitransit.fi/routing/v1/routers/hsl/bike_rental",
     headers: {
       Accept : "application/json; charset=utf-8",
       "Content-Type": "application/json; charset=utf-8"
