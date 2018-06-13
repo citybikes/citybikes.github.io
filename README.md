@@ -1,6 +1,6 @@
-# Helsinki city bikes
+# Helsinki and Turku city bikes
 
-How many Helsinki city bikes are at the nearest station?
+How many city bikes are at the nearest station?
 
 No map, because you probably already know where they are anyway.
 
@@ -12,6 +12,22 @@ If you want to use it from a fixed location, use the name (or part of a name, ca
  * https://citybikes.github.io/?id=A23
  * https://citybikes.github.io/?lat=60.168333&lon=24.95625
 
----
+## Turku
 
-See also https://hugovk.github.io/helometer
+ * https://citybikes.github.io/?turku
+ * https://citybikes.github.io/?turku&name=föri
+ * https://citybikes.github.io/?turku&id=23
+ * https://citybikes.github.io/?turku&lat=60.4518&lon=22.2666
+
+
+## How to test locally
+
+```sh
+python3 -m http.server 8000
+```
+
+Then visit http://localhost:8000/
+
+## See also
+
+* https://hugovk.github.io/helometer

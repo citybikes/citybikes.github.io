@@ -1,6 +1,17 @@
-function getURLParameter(name) {
-  var param = decodeURI(
-    (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+const helsinkiUrl = "https://api.digitransit.fi/routing/v1/routers/hsl/bike_rental";
+const turkuUrl = "https://api.digitransit.fi/routing/v1/routers/waltti/bike_rental";
+
+function getURLParameterValue(name) {
+  let param = decodeURI(
+    (RegExp(name + '=' + '(.+?)(&|$)', 'i').exec(location.search)||[,null])[1]
+  );
+  // Strip any trailing slash
+  return param.replace(/\/$/, '');
+}
+
+function getURLParameterField(name) {
+  let param = decodeURI(
+    (RegExp(name + '(&|$)', 'i').exec(location.search)||[,null])[1]
   );
   // Strip any trailing slash
   return param.replace(/\/$/, '');
@@ -14,11 +25,20 @@ function distanceBetweenLocAndStation(loc, station) {
     station.x);
 }
 
+
+function getLocationUrl() {
+  // Helsinki or Turku?
+  if (getURLParameterField("turku") !== "null") {
+    return turkuUrl;
+  }
+  return helsinkiUrl;
+}
+
 function ShowClosest(loc) {
 
   // Load stations from API
   $.ajax({
-    url: "https://api.digitransit.fi/routing/v1/routers/hsl/bike_rental",
+    url: getLocationUrl(),
     headers: {
       Accept : "application/json; charset=utf-8",
       "Content-Type": "application/json; charset=utf-8"
@@ -40,10 +60,10 @@ function ShowClosest(loc) {
       // Update list
       $.each(data.stations, function(key, val) {
 
-        var totalSlots = val.bikesAvailable + val.spacesAvailable;
-        var slotDivStart = '<div class="city-bike-column';
-        var slotDivEnd = '"></div>';
-        var slots = '';
+        let totalSlots = val.bikesAvailable + val.spacesAvailable;
+        let slotDivStart = '<div class="city-bike-column';
+        let slotDivEnd = '"></div>';
+        let slots = '';
 
         for (i = 0; i < val.bikesAvailable; i++) {
          slots += slotDivStart + ' available' + slotDivEnd;
@@ -75,7 +95,7 @@ $(document).ready(function() {
 
   // Load stations from API
   $.ajax({
-    url: "https://api.digitransit.fi/routing/v1/routers/hsl/bike_rental",
+    url: getLocationUrl(),
     headers: {
       Accept : "application/json; charset=utf-8",
       "Content-Type": "application/json; charset=utf-8"
@@ -89,44 +109,44 @@ $(document).ready(function() {
       });
 
       // Do we have lat/lon parameters?
-      if (getURLParameter("lat") !== "null" &&
-          getURLParameter("lon") !== "null" ) {
-        var loc = {
+      if (getURLParameterValue("lat") !== "null" &&
+          getURLParameterValue("lon") !== "null" ) {
+        let loc = {
           coords: {
-            latitude: getURLParameter("lat"),
-            longitude: getURLParameter("lon")
+            latitude: getURLParameterValue("lat"),
+            longitude: getURLParameterValue("lon")
           }
         }
         ShowClosest(loc);
       }
       // Do we have an ID parameter?
-      else if (getURLParameter('id') !== 'null') {
-        var id = getURLParameter('id').toUpperCase();
+      else if (getURLParameterValue('id') !== 'null') {
+        let id = getURLParameterValue('id').toUpperCase();
         $.each(data.stations, function(key, val) {
           if (val.id === id) {
-            var loc = {
+            let loc = {
               coords: {
                 latitude: val.y,
                 longitude: val.x
               }
-            }
+            };
             ShowClosest(loc);
             return false;
           }
         });
       }
       // Do we have a name parameter?
-      else if (getURLParameter('name') !== 'null') {
-        var name = getURLParameter('name').toLowerCase();
+      else if (getURLParameterValue('name') !== 'null') {
+        let name = getURLParameterValue('name').toLowerCase();
         $.each(data.stations, function(key, val) {
           // If substring found
           if (val.name.toLowerCase().indexOf(name) > -1) {
-            var loc = {
+            let loc = {
               coords: {
                 latitude: val.y,
                 longitude: val.x
               }
-            }
+            };
             ShowClosest(loc);
             return false;
           }
