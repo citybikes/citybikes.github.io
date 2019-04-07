@@ -26,7 +26,7 @@ If you want to use it from a fixed location, use the name (or part of a name, ca
 python3 -m http.server 8000
 ```
 
-Then visit http://localhost:8000/
+Then visit http://sitename.localhost:8000/
 
 ## See also
 
