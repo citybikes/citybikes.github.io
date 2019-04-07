@@ -24,15 +24,14 @@ ul {
   list-style-type: none;
   padding-left: 0;
 }
-li.station,
-#cities {
+li.station {
   font-size: 750%;
 }
-#cities a {
+li.station a {
   color: white;
   text-decoration: none;
 }
-#cities a:hover {
+li.station a:hover {
   color: black;
   background-color: white;
 }

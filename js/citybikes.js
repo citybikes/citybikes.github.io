@@ -72,10 +72,13 @@ function ShowClosest(loc) {
          slots += slotDivStart + slotDivEnd;
         }
 
+        const map_link = 'https://www.google.com/maps/place/' + val.y + ',' + val.x;
         $('#metro-list').append(
           $('<li class="station">').append(
             // '<span class="dist">' + val.id + '</span>' +
-            '&nbsp;' + val.name +
+            '<a target="citybike-map" href="' + map_link + '">' +
+            val.name +
+            '</a>' +
             ' <span class="dist">' +
             numberWithSpaces(val.distance) + '&nbsp;m' +
             ' ' + val.bikesAvailable + '/' + totalSlots + '</span>' +
@@ -116,7 +119,7 @@ $(document).ready(function() {
             latitude: getURLParameterValue("lat"),
             longitude: getURLParameterValue("lon")
           }
-        }
+        };
         ShowClosest(loc);
       }
       // Do we have an ID parameter?
