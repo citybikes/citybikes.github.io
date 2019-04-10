@@ -72,11 +72,11 @@ function ShowClosest(loc) {
          slots += slotDivStart + slotDivEnd;
         }
 
-        const map_link = 'https://www.google.com/maps/place/' + val.y + ',' + val.x;
+        const streetview_link = 'https://maps.google.com/maps?q=&layer=c&cbll=' + val.y + ',' + val.x;
         $('#metro-list').append(
           $('<li class="station">').append(
             // '<span class="dist">' + val.id + '</span>' +
-            '<a target="citybike-map" href="' + map_link + '">' +
+            '<a target="citybike-map" href="' + streetview + '">' +
             val.name +
             '</a>' +
             ' <span class="dist">' +
