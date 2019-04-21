@@ -104,6 +104,11 @@ function ShowClosestError() {
   $("#live-geolocation").html('Dunno closest.');
 }
 
+/**
+ * Show an error when station not found
+ * @param needle
+ * @param stations Optional. Include for IDs, omit for names.
+ */
 function ShowNotFound(needle, stations) {
   if (stations == null) {
     $("#live-geolocation").html(needle + ' not found. Available names:');
@@ -115,6 +120,41 @@ function ShowNotFound(needle, stations) {
         $('<li class="station">').append(val.id + ' ' + val.name)
       );
     });
+  }
+}
+
+/**
+ * Show found station, or an error
+ * @param foundStation
+ * @param needle
+ * @param allStations Optional. Include for IDs, omit for names.
+ */
+function ShowFoundStation(foundStation, needle, allStations) {
+  if (foundStation == null) {
+    ShowNotFound(needle, allStations);
+  } else {
+    const loc = {
+      coords: {
+        latitude: foundStation.y,
+        longitude: foundStation.x,
+      }
+    };
+    ShowClosest(loc);
+  }
+}
+
+/**
+ * Show filtered stations, or an error
+ * @param filteredStations
+ * @param needle
+ * @param allStations Optional. Include for IDs, omit for names.
+ */
+function ShowFilteredStations(filteredStations, needle, allStations) {
+  if (filteredStations.length) {
+    $("#live-geolocation").empty();
+    ShowStations(filteredStations);
+  } else {
+    ShowNotFound(needle, allStations);
   }
 }
 
@@ -150,18 +190,7 @@ $(document).ready(function() {
       else if (getURLParameterValue('id') !== 'null') {
         const id = getURLParameterValue('id').toUpperCase();
         const foundStation = data.stations.find(station => station.id === id);
-
-        if (foundStation == null) {
-          ShowNotFound(id, data.stations);
-        } else {
-          const loc = {
-            coords: {
-              latitude: foundStation.y,
-              longitude: foundStation.x,
-            }
-          };
-          ShowClosest(loc);
-        }
+        ShowFoundStation(foundStation, id, data.stations)
       }
       // Do we have multiple IDs parameter?
       else if (getURLParameterValue('ids') !== 'null') {
@@ -169,13 +198,7 @@ $(document).ready(function() {
         const filteredStations = data.stations.filter(
           station => ids.includes(station.id)
         );
-
-        if (filteredStations.length) {
-          $("#live-geolocation").empty();
-          ShowStations(filteredStations);
-        } else {
-          ShowNotFound(ids, data.stations);
-        }
+        ShowFilteredStations(filteredStations, ids, data.stations);
       }
       // Do we have a name parameter?
       else if (getURLParameterValue('name') !== 'null') {
@@ -183,17 +206,7 @@ $(document).ready(function() {
         const foundStation = data.stations.find(
           station => station.name.toLowerCase().includes(name)
         );
-        if (foundStation == null) {
-          ShowNotFound(name)
-        } else {
-          const loc = {
-            coords: {
-              latitude: foundStation.y,
-              longitude: foundStation.x,
-            }
-          };
-          ShowClosest(loc);
-        }
+        ShowFoundStation(foundStation, name)
       }
       // Do we have a multiple names parameter?
       else if (getURLParameterValue('names') !== 'null') {
@@ -202,13 +215,7 @@ $(document).ready(function() {
         const filteredStations = data.stations.filter(
           station => names.includes(station.name.toLowerCase())
         );
-
-        if (filteredStations.length) {
-          $("#live-geolocation").empty();
-          ShowStations(filteredStations);
-        } else {
-          ShowNotFound(originalNames);
-        }
+        ShowFilteredStations(filteredStations, originalNames);
       }
       // Otherwise boot up the satellites
       else if (geoPosition.init()) {
