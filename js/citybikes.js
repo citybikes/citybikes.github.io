@@ -144,7 +144,7 @@ $(document).ready(function() {
       }
       // Do we have an ID parameter?
       else if (getURLParameterValue('id') !== 'null') {
-        let id = getURLParameterValue('id').toUpperCase();
+        const id = getURLParameterValue('id').toUpperCase();
         const foundStation = data.stations.find(station => station.id === id);
 
         if (foundStation == null) {
@@ -172,20 +172,15 @@ $(document).ready(function() {
       }
       // Do we have a name parameter?
       else if (getURLParameterValue('name') !== 'null') {
-        let name = getURLParameterValue('name').toLowerCase();
-        $.each(data.stations, function(key, val) {
-          // If substring found
-          if (val.name.toLowerCase().indexOf(name) > -1) {
-            let loc = {
-              coords: {
-                latitude: val.y,
-                longitude: val.x
-              }
-            };
-            ShowClosest(loc);
-            return false;
+        const name = getURLParameterValue('name').toLowerCase();
+        const foundStation = data.stations.find(station => station.name.includes(name));
+        const loc = {
+          coords: {
+            latitude: foundStation.y,
+            longitude: foundStation.x,
           }
-        });
+        };
+        ShowClosest(loc);
       }
       // Otherwise boot up the satellites
       else if (geoPosition.init()) {
