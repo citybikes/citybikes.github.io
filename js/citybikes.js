@@ -82,6 +82,9 @@ function ShowStations(stations) {
       slots += slotDivStart + slotDivEnd;
     }
 
+    const distance = val.distance == null ? '' :
+      numberWithSpaces(val.distance) + '&nbsp;m ';
+
     const map_link = 'https://www.google.com/maps/place/' + val.y + ',' + val.x;
     $('#metro-list').append(
       $('<li class="station">').append(
@@ -90,8 +93,8 @@ function ShowStations(stations) {
         val.name +
         '</a>' +
         ' <span class="dist">' +
-        numberWithSpaces(val.distance) + '&nbsp;m' +
-        ' ' + val.bikesAvailable + '/' + totalSlots + '</span>' +
+        distance +
+        val.bikesAvailable + '/' + totalSlots + '</span>' +
         '<div class="slots">' + slots + '</div>'
       ));
   });
@@ -99,6 +102,16 @@ function ShowStations(stations) {
 
 function ShowClosestError() {
   $("#live-geolocation").html('Dunno closest.');
+}
+
+function ShowNotFound(needle, stations) {
+  $("#live-geolocation").html(needle + ' not found. Available IDs:');
+  $("ul").empty();
+  $.each(stations, function(key, val) {
+    $('#metro-list').append(
+      $('<li class="station">').append(val.id + ' ' + val.name)
+    );
+  });
 }
 
 $(document).ready(function() {
@@ -147,13 +160,18 @@ $(document).ready(function() {
           }
         });
         if (!found) {
-          $("#live-geolocation").html(id + ' not found. Available IDs:');
-          $("ul").empty();
-          $.each(data.stations, function(key, val) {
-            $('#metro-list').append(
-              $('<li class="station">').append(val.id + ' ' + val.name)
-            );
-          });
+          ShowNotFound(id, data.stations);
+        }
+      }
+      // Do we have multiple IDs parameter?
+      else if (getURLParameterValue('ids') !== 'null') {
+        const ids = getURLParameterValue('ids').split(',');
+        const filteredStations = data.stations.filter(station => ids.includes(station.id));
+
+        if (filteredStations.length) {
+          ShowStations(filteredStations);
+        } else {
+          ShowNotFound(ids, data.stations);
         }
       }
       // Do we have a name parameter?
