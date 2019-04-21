@@ -53,6 +53,7 @@ function ShowClosest(loc) {
       // Sort by closest to here
       data.stations.sort(compareDistances);
 
+      $("#live-geolocation").html('Closest:');
       ShowStations(data.stations);
     }
   });
@@ -64,7 +65,6 @@ function ShowClosest(loc) {
  */
 function ShowStations(stations) {
   // Reset list
-  $("#live-geolocation").html('Closest:');
   $("ul").empty();
 
   // Update list
@@ -166,9 +166,12 @@ $(document).ready(function() {
       // Do we have multiple IDs parameter?
       else if (getURLParameterValue('ids') !== 'null') {
         const ids = getURLParameterValue('ids').split(',');
-        const filteredStations = data.stations.filter(station => ids.includes(station.id));
+        const filteredStations = data.stations.filter(
+          station => ids.includes(station.id)
+        );
 
         if (filteredStations.length) {
+          $("#live-geolocation").empty();
           ShowStations(filteredStations);
         } else {
           ShowNotFound(ids, data.stations);
@@ -177,7 +180,9 @@ $(document).ready(function() {
       // Do we have a name parameter?
       else if (getURLParameterValue('name') !== 'null') {
         const name = getURLParameterValue('name').toLowerCase();
-        const foundStation = data.stations.find(station => station.name.includes(name));
+        const foundStation = data.stations.find(
+          station => station.name.toLowerCase().includes(name)
+        );
         if (foundStation == null) {
           ShowNotFound(name)
         } else {
@@ -188,6 +193,21 @@ $(document).ready(function() {
             }
           };
           ShowClosest(loc);
+        }
+      }
+      // Do we have a multiple names parameter?
+      else if (getURLParameterValue('names') !== 'null') {
+        const originalNames = getURLParameterValue('names');
+        const names = originalNames.toLowerCase().split(',');
+        const filteredStations = data.stations.filter(
+          station => names.includes(station.name.toLowerCase())
+        );
+
+        if (filteredStations.length) {
+          $("#live-geolocation").empty();
+          ShowStations(filteredStations);
+        } else {
+          ShowNotFound(originalNames);
         }
       }
       // Otherwise boot up the satellites
