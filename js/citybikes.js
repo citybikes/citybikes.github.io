@@ -145,22 +145,18 @@ $(document).ready(function() {
       // Do we have an ID parameter?
       else if (getURLParameterValue('id') !== 'null') {
         let id = getURLParameterValue('id').toUpperCase();
-        let found = false;
-        $.each(data.stations, function(key, val) {
-          if (val.id === id) {
-            let loc = {
-              coords: {
-                latitude: val.y,
-                longitude: val.x
-              }
-            };
-            found = true;
-            ShowClosest(loc);
-            return false;
-          }
-        });
-        if (!found) {
+        const foundStation = data.stations.find(station => station.id === id);
+
+        if (foundStation == null) {
           ShowNotFound(id, data.stations);
+        } else {
+          const loc = {
+            coords: {
+              latitude: foundStation.y,
+              longitude: foundStation.x,
+            }
+          };
+          ShowClosest(loc);
         }
       }
       // Do we have multiple IDs parameter?
