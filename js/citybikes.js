@@ -124,35 +124,23 @@ function ShowNotFound(needle, stations) {
 }
 
 /**
- * Show found station, or an error
- * @param foundStation
- * @param needle
- * @param allStations Optional. Include for IDs, omit for names.
+ * Show just some stations, or an error.
+ * @param someStations Array of one or more stations to show.
+ * @param needle For error handling. ID(s) or name(s).
+ * @param allStations For error handling. Include for IDs, omit for names.
  */
-function ShowFoundStation(foundStation, needle, allStations) {
-  if (foundStation == null) {
-    ShowNotFound(needle, allStations);
-  } else {
+function ShowStationsSubset(someStations, needle, allStations) {
+  if (someStations.length > 1) {
+    $("#live-geolocation").empty();
+    ShowStations(someStations);
+  } else if (someStations.length === 1 && someStations[0] != null) {
     const loc = {
       coords: {
-        latitude: foundStation.y,
-        longitude: foundStation.x,
+        latitude: someStations[0].y,
+        longitude: someStations[0].x,
       }
     };
     ShowClosest(loc);
-  }
-}
-
-/**
- * Show filtered stations, or an error
- * @param filteredStations
- * @param needle
- * @param allStations Optional. Include for IDs, omit for names.
- */
-function ShowFilteredStations(filteredStations, needle, allStations) {
-  if (filteredStations.length) {
-    $("#live-geolocation").empty();
-    ShowStations(filteredStations);
   } else {
     ShowNotFound(needle, allStations);
   }
@@ -190,7 +178,7 @@ $(document).ready(function() {
       else if (getURLParameterValue('id') !== 'null') {
         const id = getURLParameterValue('id').toUpperCase();
         const foundStation = data.stations.find(station => station.id === id);
-        ShowFoundStation(foundStation, id, data.stations)
+        ShowStationsSubset([foundStation], id, data.stations)
       }
       // Do we have multiple IDs parameter?
       else if (getURLParameterValue('ids') !== 'null') {
@@ -198,7 +186,7 @@ $(document).ready(function() {
         const filteredStations = data.stations.filter(
           station => ids.includes(station.id)
         );
-        ShowFilteredStations(filteredStations, ids, data.stations);
+        ShowStationsSubset(filteredStations, ids, data.stations);
       }
       // Do we have a name parameter?
       else if (getURLParameterValue('name') !== 'null') {
@@ -206,7 +194,7 @@ $(document).ready(function() {
         const foundStation = data.stations.find(
           station => station.name.toLowerCase().includes(name)
         );
-        ShowFoundStation(foundStation, name)
+        ShowStationsSubset([foundStation], name)
       }
       // Do we have a multiple names parameter?
       else if (getURLParameterValue('names') !== 'null') {
@@ -215,7 +203,7 @@ $(document).ready(function() {
         const filteredStations = data.stations.filter(
           station => names.includes(station.name.toLowerCase())
         );
-        ShowFilteredStations(filteredStations, originalNames);
+        ShowStationsSubset(filteredStations, originalNames);
       }
       // Otherwise boot up the satellites
       else if (geoPosition.init()) {
