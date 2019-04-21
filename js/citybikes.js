@@ -125,6 +125,7 @@ $(document).ready(function() {
       // Do we have an ID parameter?
       else if (getURLParameterValue('id') !== 'null') {
         let id = getURLParameterValue('id').toUpperCase();
+        let found = false;
         $.each(data.stations, function(key, val) {
           if (val.id === id) {
             let loc = {
@@ -133,10 +134,20 @@ $(document).ready(function() {
                 longitude: val.x
               }
             };
+            found = true;
             ShowClosest(loc);
             return false;
           }
         });
+        if (!found) {
+          $("#live-geolocation").html(id + ' not found. Available IDs:');
+          $("ul").empty();
+          $.each(data.stations, function(key, val) {
+            $('#metro-list').append(
+              $('<li class="station">').append(val.id + ' ' + val.name)
+            );
+          });
+        }
       }
       // Do we have a name parameter?
       else if (getURLParameterValue('name') !== 'null') {
