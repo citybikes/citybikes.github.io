@@ -66,10 +66,10 @@ function ShowClosest(loc) {
         let slots = '';
 
         for (i = 0; i < val.bikesAvailable; i++) {
-         slots += slotDivStart + ' available' + slotDivEnd;
+          slots += slotDivStart + ' available' + slotDivEnd;
         }
         for (i = 0; i < val.spacesAvailable; i++) {
-         slots += slotDivStart + slotDivEnd;
+          slots += slotDivStart + slotDivEnd;
         }
 
         const map_link = 'https://www.google.com/maps/place/' + val.y + ',' + val.x;
@@ -83,7 +83,7 @@ function ShowClosest(loc) {
             numberWithSpaces(val.distance) + '&nbsp;m' +
             ' ' + val.bikesAvailable + '/' + totalSlots + '</span>' +
             '<div class="slots">' + slots + '</div>'
-            ));
+          ));
       });
 
     }});
@@ -113,7 +113,7 @@ $(document).ready(function() {
 
       // Do we have lat/lon parameters?
       if (getURLParameterValue("lat") !== "null" &&
-          getURLParameterValue("lon") !== "null" ) {
+        getURLParameterValue("lon") !== "null" ) {
         let loc = {
           coords: {
             latitude: getURLParameterValue("lat"),
