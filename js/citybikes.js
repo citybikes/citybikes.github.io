@@ -53,41 +53,48 @@ function ShowClosest(loc) {
       // Sort by closest to here
       data.stations.sort(compareDistances);
 
-      // Reset list
-      $("#live-geolocation").html('Closest:');
-      $("ul").empty();
+      ShowStations(data.stations);
+    }
+  });
+}
 
-      // Update list
-      $.each(data.stations, function(key, val) {
+/**
+ * Show sorted list of stations
+ * @param stations
+ */
+function ShowStations(stations) {
+  // Reset list
+  $("#live-geolocation").html('Closest:');
+  $("ul").empty();
 
-        let totalSlots = val.bikesAvailable + val.spacesAvailable;
-        let slotDivStart = '<div class="city-bike-column';
-        let slotDivEnd = '"></div>';
-        let slots = '';
+  // Update list
+  $.each(stations, function(key, val) {
 
-        for (i = 0; i < val.bikesAvailable; i++) {
-          slots += slotDivStart + ' available' + slotDivEnd;
-        }
-        for (i = 0; i < val.spacesAvailable; i++) {
-          slots += slotDivStart + slotDivEnd;
-        }
+    let totalSlots = val.bikesAvailable + val.spacesAvailable;
+    let slotDivStart = '<div class="city-bike-column';
+    let slotDivEnd = '"></div>';
+    let slots = '';
 
-        const map_link = 'https://www.google.com/maps/place/' + val.y + ',' + val.x;
-        $('#metro-list').append(
-          $('<li class="station">').append(
-            // '<span class="dist">' + val.id + '</span>' +
-            '<a target="citybike-map" href="' + map_link + '">' +
-            val.name +
-            '</a>' +
-            ' <span class="dist">' +
-            numberWithSpaces(val.distance) + '&nbsp;m' +
-            ' ' + val.bikesAvailable + '/' + totalSlots + '</span>' +
-            '<div class="slots">' + slots + '</div>'
-          ));
-      });
+    for (i = 0; i < val.bikesAvailable; i++) {
+      slots += slotDivStart + ' available' + slotDivEnd;
+    }
+    for (i = 0; i < val.spacesAvailable; i++) {
+      slots += slotDivStart + slotDivEnd;
+    }
 
-    }});
-
+    const map_link = 'https://www.google.com/maps/place/' + val.y + ',' + val.x;
+    $('#metro-list').append(
+      $('<li class="station">').append(
+        // '<span class="dist">' + val.id + '</span>' +
+        '<a target="citybike-map" href="' + map_link + '">' +
+        val.name +
+        '</a>' +
+        ' <span class="dist">' +
+        numberWithSpaces(val.distance) + '&nbsp;m' +
+        ' ' + val.bikesAvailable + '/' + totalSlots + '</span>' +
+        '<div class="slots">' + slots + '</div>'
+      ));
+  });
 }
 
 function ShowClosestError() {
