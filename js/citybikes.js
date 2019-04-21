@@ -105,13 +105,17 @@ function ShowClosestError() {
 }
 
 function ShowNotFound(needle, stations) {
-  $("#live-geolocation").html(needle + ' not found. Available IDs:');
-  $("ul").empty();
-  $.each(stations, function(key, val) {
-    $('#metro-list').append(
-      $('<li class="station">').append(val.id + ' ' + val.name)
-    );
-  });
+  if (stations == null) {
+    $("#live-geolocation").html(needle + ' not found. Available names:');
+  } else {
+    $("#live-geolocation").html(needle + ' not found. Available IDs:');
+    $("ul").empty();
+    $.each(stations, function(key, val) {
+      $('#metro-list').append(
+        $('<li class="station">').append(val.id + ' ' + val.name)
+      );
+    });
+  }
 }
 
 $(document).ready(function() {
@@ -174,13 +178,17 @@ $(document).ready(function() {
       else if (getURLParameterValue('name') !== 'null') {
         const name = getURLParameterValue('name').toLowerCase();
         const foundStation = data.stations.find(station => station.name.includes(name));
-        const loc = {
-          coords: {
-            latitude: foundStation.y,
-            longitude: foundStation.x,
-          }
-        };
-        ShowClosest(loc);
+        if (foundStation == null) {
+          ShowNotFound(name)
+        } else {
+          const loc = {
+            coords: {
+              latitude: foundStation.y,
+              longitude: foundStation.x,
+            }
+          };
+          ShowClosest(loc);
+        }
       }
       // Otherwise boot up the satellites
       else if (geoPosition.init()) {
