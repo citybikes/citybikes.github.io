@@ -70,32 +70,25 @@ function ShowStations(stations) {
   // Update list
   $.each(stations, function(key, val) {
 
-    let totalSlots = val.bikesAvailable + val.spacesAvailable;
-    let slotDivStart = '<div class="city-bike-column';
-    let slotDivEnd = '"></div>';
+    const totalSlots = val.bikesAvailable + val.spacesAvailable;
     let slots = '';
 
     for (i = 0; i < val.bikesAvailable; i++) {
-      slots += slotDivStart + ' available' + slotDivEnd;
+      slots += '<div class="city-bike-column available"></div>';
     }
     for (i = 0; i < val.spacesAvailable; i++) {
-      slots += slotDivStart + slotDivEnd;
+      slots += '<div class="city-bike-column"></div>';
     }
 
     const distance = val.distance == null ? '' :
       numberWithSpaces(val.distance) + '&nbsp;m ';
 
-    const map_link = 'https://www.google.com/maps/place/' + val.y + ',' + val.x;
+    const map_link = `https://www.google.com/maps/place/${val.y},${val.x}`;
     $('#metro-list').append(
       $('<li class="station">').append(
-        // '<span class="dist">' + val.id + '</span>' +
-        '<a target="citybike-map" href="' + map_link + '">' +
-        val.name +
-        '</a>' +
-        ' <span class="dist">' +
-        distance +
-        val.bikesAvailable + '/' + totalSlots + '</span>' +
-        '<div class="slots">' + slots + '</div>'
+        `<a target="citybike-map" href="${map_link}">${val.name}</a> ` +
+        `<span class="dist">${distance}${val.bikesAvailable}/${totalSlots}</span>` +
+        `<div class="slots">${slots}</div>`
       ));
   });
 }
@@ -117,7 +110,7 @@ function ShowNotFound(needle, stations) {
     $("ul").empty();
     $.each(stations, function(key, val) {
       $('#metro-list').append(
-        $('<li class="station">').append(val.id + ' ' + val.name)
+        $('<li class="station">').append(`${val.id} ${val.name}`)
       );
     });
   }
