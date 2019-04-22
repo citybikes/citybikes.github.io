@@ -2,7 +2,7 @@ const helsinkiUrl = "https://api.digitransit.fi/routing/v1/routers/hsl/bike_rent
 const turkuUrl = "https://api.digitransit.fi/routing/v1/routers/waltti/bike_rental";
 
 function getURLParameterValue(name) {
-  let param = decodeURI(
+  const param = decodeURI(
     (RegExp(name + '=' + '(.+?)(&|$)', 'i').exec(location.search)||[,null])[1]
   );
   // Strip any trailing slash
@@ -10,7 +10,7 @@ function getURLParameterValue(name) {
 }
 
 function getURLParameterField(name) {
-  let param = decodeURI(
+  const param = decodeURI(
     (RegExp(name + '(&|$)', 'i').exec(location.search)||[,null])[1]
   );
   // Strip any trailing slash
@@ -159,7 +159,7 @@ $(document).ready(function() {
       // Do we have lat/lon parameters?
       if (getURLParameterValue("lat") !== "null" &&
         getURLParameterValue("lon") !== "null" ) {
-        let loc = {
+        const loc = {
           coords: {
             latitude: getURLParameterValue("lat"),
             longitude: getURLParameterValue("lon")
