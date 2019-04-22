@@ -12,6 +12,11 @@ If you want to use it from a fixed location, use the name (or part of a name, ca
  * https://citybikes.github.io/?id=161
  * https://citybikes.github.io/?lat=60.168333&lon=24.95625
 
+Or show only specific stations:
+
+ * https://citybikes.github.io/?names=Eteläesplanadi,Kasarmitori,Unioninkatu
+ * https://citybikes.github.io/?ids=161,010,011
+
 ## Turku
 
  * https://citybikes.github.io/?turku

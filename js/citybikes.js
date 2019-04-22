@@ -2,7 +2,7 @@ const helsinkiUrl = "https://api.digitransit.fi/routing/v1/routers/hsl/bike_rent
 const turkuUrl = "https://api.digitransit.fi/routing/v1/routers/waltti/bike_rental";
 
 function getURLParameterValue(name) {
-  let param = decodeURI(
+  const param = decodeURI(
     (RegExp(name + '=' + '(.+?)(&|$)', 'i').exec(location.search)||[,null])[1]
   );
   // Strip any trailing slash
@@ -10,7 +10,7 @@ function getURLParameterValue(name) {
 }
 
 function getURLParameterField(name) {
-  let param = decodeURI(
+  const param = decodeURI(
     (RegExp(name + '(&|$)', 'i').exec(location.search)||[,null])[1]
   );
   // Strip any trailing slash
@@ -53,45 +53,90 @@ function ShowClosest(loc) {
       // Sort by closest to here
       data.stations.sort(compareDistances);
 
-      // Reset list
       $("#live-geolocation").html('Closest:');
-      $("ul").empty();
+      ShowStations(data.stations);
+    }
+  });
+}
 
-      // Update list
-      $.each(data.stations, function(key, val) {
+/**
+ * Show sorted list of stations
+ * @param stations
+ */
+function ShowStations(stations) {
+  // Reset list
+  $("ul").empty();
 
-        let totalSlots = val.bikesAvailable + val.spacesAvailable;
-        let slotDivStart = '<div class="city-bike-column';
-        let slotDivEnd = '"></div>';
-        let slots = '';
+  // Update list
+  $.each(stations, function(key, val) {
 
-        for (i = 0; i < val.bikesAvailable; i++) {
-         slots += slotDivStart + ' available' + slotDivEnd;
-        }
-        for (i = 0; i < val.spacesAvailable; i++) {
-         slots += slotDivStart + slotDivEnd;
-        }
+    const totalSlots = val.bikesAvailable + val.spacesAvailable;
+    let slots = '';
 
-        const map_link = 'https://www.google.com/maps/place/' + val.y + ',' + val.x;
-        $('#metro-list').append(
-          $('<li class="station">').append(
-            // '<span class="dist">' + val.id + '</span>' +
-            '<a target="citybike-map" href="' + map_link + '">' +
-            val.name +
-            '</a>' +
-            ' <span class="dist">' +
-            numberWithSpaces(val.distance) + '&nbsp;m' +
-            ' ' + val.bikesAvailable + '/' + totalSlots + '</span>' +
-            '<div class="slots">' + slots + '</div>'
-            ));
-      });
+    for (i = 0; i < val.bikesAvailable; i++) {
+      slots += '<div class="city-bike-column available"></div>';
+    }
+    for (i = 0; i < val.spacesAvailable; i++) {
+      slots += '<div class="city-bike-column"></div>';
+    }
 
-    }});
+    const distance = val.distance == null ? '' :
+      numberWithSpaces(val.distance) + '&nbsp;m ';
 
+    const map_link = `https://www.google.com/maps/place/${val.y},${val.x}`;
+    $('#metro-list').append(
+      $('<li class="station">').append(
+        `<a target="citybike-map" href="${map_link}">${val.name}</a> ` +
+        `<span class="dist">${distance}${val.bikesAvailable}/${totalSlots}</span>` +
+        `<div class="slots">${slots}</div>`
+      ));
+  });
 }
 
 function ShowClosestError() {
   $("#live-geolocation").html('Dunno closest.');
+}
+
+/**
+ * Show an error when station not found
+ * @param needle
+ * @param stations Optional. Include for IDs, omit for names.
+ */
+function ShowNotFound(needle, stations) {
+  if (stations == null) {
+    $("#live-geolocation").html(needle + ' not found. Available names:');
+  } else {
+    $("#live-geolocation").html(needle + ' not found. Available IDs:');
+    $("ul").empty();
+    $.each(stations, function(key, val) {
+      $('#metro-list').append(
+        $('<li class="station">').append(`${val.id} ${val.name}`)
+      );
+    });
+  }
+}
+
+/**
+ * Show just some stations, or an error.
+ * @param someStations Array of one or more stations to show.
+ * @param needle For error handling. ID(s) or name(s).
+ * @param allStations For error handling. Include for IDs, omit for names.
+ */
+function ShowStationsSubset(someStations, needle, allStations) {
+  if (someStations.length > 1) {
+    $("#live-geolocation").empty();
+    ShowStations(someStations);
+  } else if (someStations.length === 1 && someStations[0] != null) {
+    const loc = {
+      coords: {
+        latitude: someStations[0].y,
+        longitude: someStations[0].x,
+      }
+    };
+    ShowClosest(loc);
+  } else {
+    ShowNotFound(needle, allStations);
+  }
 }
 
 $(document).ready(function() {
@@ -113,8 +158,8 @@ $(document).ready(function() {
 
       // Do we have lat/lon parameters?
       if (getURLParameterValue("lat") !== "null" &&
-          getURLParameterValue("lon") !== "null" ) {
-        let loc = {
+        getURLParameterValue("lon") !== "null" ) {
+        const loc = {
           coords: {
             latitude: getURLParameterValue("lat"),
             longitude: getURLParameterValue("lon")
@@ -124,47 +169,34 @@ $(document).ready(function() {
       }
       // Do we have an ID parameter?
       else if (getURLParameterValue('id') !== 'null') {
-        let id = getURLParameterValue('id').toUpperCase();
-        let found = false;
-        $.each(data.stations, function(key, val) {
-          if (val.id === id) {
-            let loc = {
-              coords: {
-                latitude: val.y,
-                longitude: val.x
-              }
-            };
-            found = true;
-            ShowClosest(loc);
-            return false;
-          }
-        });
-        if (!found) {
-          $("#live-geolocation").html(id + ' not found. Available IDs:');
-          $("ul").empty();
-          $.each(data.stations, function(key, val) {
-            $('#metro-list').append(
-              $('<li class="station">').append(val.id + ' ' + val.name)
-            );
-          });
-        }
+        const id = getURLParameterValue('id').toUpperCase();
+        const foundStation = data.stations.find(station => station.id === id);
+        ShowStationsSubset([foundStation], id, data.stations)
+      }
+      // Do we have multiple IDs parameter?
+      else if (getURLParameterValue('ids') !== 'null') {
+        const ids = getURLParameterValue('ids').split(',');
+        const filteredStations = data.stations.filter(
+          station => ids.includes(station.id)
+        );
+        ShowStationsSubset(filteredStations, ids, data.stations);
       }
       // Do we have a name parameter?
       else if (getURLParameterValue('name') !== 'null') {
-        let name = getURLParameterValue('name').toLowerCase();
-        $.each(data.stations, function(key, val) {
-          // If substring found
-          if (val.name.toLowerCase().indexOf(name) > -1) {
-            let loc = {
-              coords: {
-                latitude: val.y,
-                longitude: val.x
-              }
-            };
-            ShowClosest(loc);
-            return false;
-          }
-        });
+        const name = getURLParameterValue('name').toLowerCase();
+        const foundStation = data.stations.find(
+          station => station.name.toLowerCase().includes(name)
+        );
+        ShowStationsSubset([foundStation], name)
+      }
+      // Do we have a multiple names parameter?
+      else if (getURLParameterValue('names') !== 'null') {
+        const originalNames = getURLParameterValue('names');
+        const names = originalNames.toLowerCase().split(',');
+        const filteredStations = data.stations.filter(
+          station => names.includes(station.name.toLowerCase())
+        );
+        ShowStationsSubset(filteredStations, originalNames);
       }
       // Otherwise boot up the satellites
       else if (geoPosition.init()) {
