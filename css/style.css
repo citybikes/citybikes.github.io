@@ -21,6 +21,7 @@ ul {
 }
 li.station {
   font-size: 750%;
+  word-break: break-word;
 }
 a {
   color: white;
