@@ -1,5 +1,41 @@
-const helsinkiUrl = "https://api.digitransit.fi/routing/v1/routers/hsl/bike_rental";
-const turkuUrl = "https://api.digitransit.fi/routing/v1/routers/waltti/bike_rental";
+const helsinkiUrl = "https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql";
+const turkuUrl = "https://api.digitransit.fi/routing/v1/routers/waltti/index/graphql";
+
+const stationsQuery = `query {
+  stations: bikeRentalStations {
+    y: lat
+    x: lon
+    id: stationId
+    name
+    bikesAvailable
+    spacesAvailable
+  }
+}`;
+const nearestQuery = `query($lat: Float!, $lon: Float!) {
+  nearest(
+    lat: $lat,
+    lon: $lon,
+    maxDistance: 1000000,
+    maxResults: 1000,
+    filterByPlaceTypes: BICYCLE_RENT
+  ) {
+    edges {
+      node {
+        distance
+        place {
+          ...on BikeRentalStation {
+            y: lat
+            x: lon
+            id: stationId
+            name
+            bikesAvailable
+            spacesAvailable
+          }
+        }
+      }
+    }
+  }
+}`;
 
 function getURLParameterValue(name) {
   const param = decodeURI(
@@ -38,7 +74,15 @@ function ShowClosest(loc) {
 
   // Load stations from API
   $.ajax({
+    method: "POST",
     url: getLocationUrl(),
+    data: JSON.stringify({
+      query: nearestQuery,
+      variables: {
+        lat: loc.coords.latitude,
+        lon: loc.coords.longitude,
+      },
+    }),
     headers: {
       Accept : "application/json; charset=utf-8",
       "Content-Type": "application/json; charset=utf-8"
@@ -46,15 +90,15 @@ function ShowClosest(loc) {
     success : function(data) {
 
       // Find distance from here to each station
-      $.each(data.stations, function(key, val) {
-        val.distance = Math.round(distanceBetweenLocAndStation(loc, val));
+      const stations = $.map(data.data.nearest.edges, function(edge, index) {
+        edge.node.place.geodesic_distance =
+          Math.round(distanceBetweenLocAndStation(loc, edge.node.place));
+        edge.node.place.distance = edge.node.distance;
+        return edge.node.place;
       });
 
-      // Sort by closest to here
-      data.stations.sort(compareDistances);
-
       $("#live-geolocation").html('Closest:');
-      ShowStations(data.stations);
+      ShowStations(stations);
     }
   });
 }
@@ -143,13 +187,17 @@ $(document).ready(function() {
 
   // Load stations from API
   $.ajax({
+    method: "POST",
     url: getLocationUrl(),
+    data: JSON.stringify({
+      query: stationsQuery,
+    }),
     headers: {
       Accept : "application/json; charset=utf-8",
       "Content-Type": "application/json; charset=utf-8"
     },
     success : function(data) {
-
+      data = data.data;
       // Show in list
       $.each(data.stations, function(key, val) {
         $('#metro-list').append(
