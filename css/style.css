@@ -61,3 +61,6 @@ span.dist {
   overflow: hidden;
   top: 0;
 }
+#map img {
+  background: #eee;
+}

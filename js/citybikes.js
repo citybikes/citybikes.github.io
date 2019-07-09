@@ -97,7 +97,8 @@ function ShowClosest(loc) {
         return edge.node.place;
       });
 
-      $("#live-geolocation").html('Closest:');
+      $("#live-geolocation").html('&nbsp;');
+      ShowMap(loc, $('#map')[0]);
       ShowStations(stations);
     }
   });
