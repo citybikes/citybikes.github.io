@@ -83,4 +83,15 @@ function renderMap(loc, container) {
         15,
         [BASEMAP_URL]
     );
+    var marker = $(`
+        <svg id="position-marker" viewbox="-100 -100 200 200" fill="transparent">
+            <circle cx="0" cy="0" r="25" />
+            <circle cx="0" cy="0" r="45" />
+            <circle cx="0" cy="0" r="63" />
+        </svg>
+    `);
+    marker.appendTo(container);
+    marker.css('position', 'absolute');
+    marker.css('top', container.clientHeight/2 - marker.height()/2);
+    marker.css('left', container.clientWidth/2 - marker.width()/2);
 }

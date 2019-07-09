@@ -64,3 +64,9 @@ span.dist {
 #map img {
   background: #eee;
 }
+#position-marker {
+  width: 3em;
+  height: 3em;
+  stroke: black;
+  stroke-width: 5;
+}
