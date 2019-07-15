@@ -11,16 +11,17 @@ html, body {
   text-align: center;
 }
 h1 {
-  font-size: 750%;
+  font-size: 500%;
   font-weight: normal;
   width: 100%;
+  margin: 0;
 }
 ul {
   list-style-type: none;
   padding-left: 0;
 }
 li.station {
-  font-size: 750%;
+  font-size: 250%;
   word-break: break-word;
 }
 a {
@@ -44,8 +45,28 @@ span.dist {
   text-align: center;
 }
 .info {
-  font-size: 300%;
+  margin: 10px;
+  font-size: 150%;
+  line-height: 1;
+  text-align: right;
+}
+.header {
+  position: relative;
+  margin: 0 0 2.5em;
+}
+#map {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  top: 0;
+}
+#map img {
+  background: #eee;
+}
+#position-marker {
+  width: 3em;
+  height: 3em;
+  stroke: black;
+  stroke-width: 5;
 }
