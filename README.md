@@ -17,6 +17,11 @@ Or show only specific stations:
  * https://citybikes.github.io/?names=Eteläesplanadi,Kasarmitori,Unioninkatu
  * https://citybikes.github.io/?ids=161,010,011
 
+To check available names or IDs:
+
+ * https://citybikes.github.io/?names=xxx
+ * https://citybikes.github.io/?ids=xxx
+
 ## Turku
 
  * https://citybikes.github.io/?turku
