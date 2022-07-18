@@ -118,10 +118,10 @@ function ShowStations(stations) {
     const totalSlots = val.bikesAvailable + val.spacesAvailable;
     let slots = '';
 
-    for (i = 0; i < val.bikesAvailable; i++) {
+    for (let i = 0; i < val.bikesAvailable; i++) {
       slots += '<div class="city-bike-column available"></div>';
     }
-    for (i = 0; i < val.spacesAvailable; i++) {
+    for (let i = 0; i < val.spacesAvailable; i++) {
       slots += '<div class="city-bike-column"></div>';
     }
 
@@ -130,7 +130,7 @@ function ShowStations(stations) {
 
     const map_link = `https://www.google.com/maps/place/${val.y},${val.x}`;
     $('#metro-list').append(
-      $('<li class="station">').append(
+      $(`<li class="station" id="${val.id}">`).append(
         `<a target="citybike-map" href="${map_link}">${val.name}</a> ` +
         `<span class="dist">${distance}${val.bikesAvailable}/${totalSlots}</span>` +
         `<div class="slots">${slots}</div>`
@@ -202,7 +202,7 @@ $(document).ready(function() {
       // Show in list
       $.each(data.stations, function(key, val) {
         $('#metro-list').append(
-          $('<li class="station">').append(val.name));
+          $(`<li class="station" id="${val.id}">`).append(val.name));
       });
 
       // Do we have lat/lon parameters?
