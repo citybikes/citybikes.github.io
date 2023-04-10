@@ -1,6 +1,5 @@
-const apiKey = "?digitransit-subscription-key=d64c5614686f45de8ae86700646bfc47"
-const helsinkiUrl = "https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql" + apiKey;
-const turkuUrl = "https://api.digitransit.fi/routing/v1/routers/waltti/index/graphql" + apiKey;
+const HELSINKI_URL = "https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql" + API_KEY;
+const TURKU_URL = "https://api.digitransit.fi/routing/v1/routers/waltti/index/graphql" + API_KEY;
 
 const stationsQuery = `query {
   stations: bikeRentalStations {
@@ -66,9 +65,9 @@ function distanceBetweenLocAndStation(loc, station) {
 function getLocationUrl() {
   // Helsinki or Turku?
   if (getURLParameterField("turku") !== "null") {
-    return turkuUrl;
+    return TURKU_URL;
   }
-  return helsinkiUrl;
+  return HELSINKI_URL;
 }
 
 function ShowClosest(loc) {
