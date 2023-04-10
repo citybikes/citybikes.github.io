@@ -4,7 +4,7 @@
 const TILE_SIZE = 256;
 const WEBMERCATOR_R = 6378137.0;
 const DIAMETER = WEBMERCATOR_R * 2 * Math.PI;
-const BASEMAP_URL = 'https://cdn.digitransit.fi/map/v1/hsl-map-256/{z}/{x}/{y}{size}.png';
+const BASEMAP_URL = 'https://cdn.digitransit.fi/map/v2/hsl-map-256/{z}/{x}/{y}{size}.png' + API_KEY;
 const CARTO_LAYER = 'https://cartocdn-ashbu.global.ssl.fastly.net/jsanz/api/v1/map/named/tpl_bba0a17c_3ca7_11e6_8eeb_0ecfd53eb7d3/all/{z}/{x}/{y}.png';
 
 function mercatorProject(lonlat){
