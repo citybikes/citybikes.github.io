@@ -1,5 +1,6 @@
-const helsinkiUrl = "https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql";
-const turkuUrl = "https://api.digitransit.fi/routing/v1/routers/waltti/index/graphql";
+const apiKey = "?digitransit-subscription-key=d64c5614686f45de8ae86700646bfc47"
+const helsinkiUrl = "https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql" + apiKey;
+const turkuUrl = "https://api.digitransit.fi/routing/v1/routers/waltti/index/graphql" + apiKey;
 
 const stationsQuery = `query {
   stations: bikeRentalStations {
