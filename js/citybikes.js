@@ -71,50 +71,48 @@ function getLocationUrl() {
 }
 
 function ShowClosest(loc) {
-
-  // Load stations from API
-  $.ajax({
-    method: "POST",
-    url: getLocationUrl(),
-    data: JSON.stringify({
-      query: nearestQuery,
-      variables: {
-        lat: loc.coords.latitude,
-        lon: loc.coords.longitude,
-      },
-    }),
-    headers: {
-      Accept : "application/json; charset=utf-8",
-      "Content-Type": "application/json; charset=utf-8"
+  const url = getLocationUrl();
+  const data = {
+    query: nearestQuery,
+    variables: {
+      lat: loc.coords.latitude,
+      lon: loc.coords.longitude,
     },
-    success : function(data) {
+  };
+  const headers = {
+    "Accept": "application/json; charset=utf-8",
+    "Content-Type": "application/json; charset=utf-8",
+  };
 
-      // Find distance from here to each station
-      const stations = $.map(data.data.nearest.edges, function(edge, index) {
-        edge.node.place.geodesic_distance =
-          Math.round(distanceBetweenLocAndStation(loc, edge.node.place));
-        edge.node.place.distance = edge.node.distance;
-        return edge.node.place;
-      });
+  fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify(data),
+  })
+  .then(response => response.json())
+  .then(data => {
+    const stations = data.data.nearest.edges.map((edge, index) => {
+      edge.node.place.geodesic_distance = Math.round(distanceBetweenLocAndStation(loc, edge.node.place));
+      edge.node.place.distance = edge.node.distance;
+      return edge.node.place;
+    });
 
-      $("#live-geolocation").html('&nbsp;');
-      ShowMap(loc, $('#map')[0]);
-      ShowStations(stations);
-    }
-  });
+    document.getElementById("live-geolocation").innerHTML = '&nbsp;';
+    ShowMap(loc, document.getElementById("map"));
+    ShowStations(stations);
+  })
+  .catch(error => console.error("Error fetching nearest stations:", error));
 }
 
-/**
- * Show sorted list of stations
- * @param stations
- */
+
 function ShowStations(stations) {
+  const ul = document.querySelector('ul');
+
   // Reset list
-  $("ul").empty();
+  ul.innerHTML = '';
 
   // Update list
-  $.each(stations, function(key, val) {
-
+  stations.forEach(function(val, key) {
     const totalSlots = val.bikesAvailable + val.spacesAvailable;
     let slots = '';
 
@@ -129,17 +127,19 @@ function ShowStations(stations) {
       numberWithSpaces(val.distance) + '&nbsp;m ';
 
     const map_link = `https://www.google.com/maps/place/${val.y},${val.x}`;
-    $('#metro-list').append(
-      $(`<li class="station" id="${val.id}">`).append(
-        `<a target="citybike-map" href="${map_link}">${val.name}</a> ` +
-        `<span class="dist">${distance}${val.bikesAvailable}/${totalSlots}</span>` +
-        `<div class="slots">${slots}</div>`
-      ));
+    const li = document.createElement('li');
+    li.classList.add('station');
+    li.setAttribute('id', val.id);
+    li.innerHTML = `<a target="citybike-map" href="${map_link}">${val.name}</a> ` +
+      `<span class="dist">${distance}${val.bikesAvailable}/${totalSlots}</span>` +
+      `<div class="slots">${slots}</div>`;
+    ul.appendChild(li);
   });
 }
 
+
 function ShowClosestError() {
-  $("#live-geolocation").html('Dunno closest.');
+  document.getElementById('live-geolocation').innerHTML = 'Dunno closest.';
 }
 
 /**
@@ -148,15 +148,19 @@ function ShowClosestError() {
  * @param stations Optional. Include for IDs, omit for names.
  */
 function ShowNotFound(needle, stations) {
+  const liveGeolocation = document.getElementById('live-geolocation');
+  const ul = document.querySelector('ul');
+
   if (stations == null) {
-    $("#live-geolocation").html(needle + ' not found. Available names:');
+    liveGeolocation.innerHTML = needle + ' not found. Available names:';
   } else {
-    $("#live-geolocation").html(needle + ' not found. Available IDs:');
-    $("ul").empty();
-    $.each(stations, function(key, val) {
-      $('#metro-list').append(
-        $('<li class="station">').append(`${val.id} ${val.name}`)
-      );
+    liveGeolocation.innerHTML = needle + ' not found. Available IDs:';
+    ul.innerHTML = '';
+    stations.forEach(function(val) {
+      const li = document.createElement('li');
+      li.classList.add('station');
+      li.innerHTML = `${val.id} ${val.name}`;
+      ul.appendChild(li);
     });
   }
 }
@@ -168,8 +172,10 @@ function ShowNotFound(needle, stations) {
  * @param allStations For error handling. Include for IDs, omit for names.
  */
 function ShowStationsSubset(someStations, needle, allStations) {
+  const liveGeolocation = document.getElementById('live-geolocation');
+
   if (someStations.length > 1) {
-    $("#live-geolocation").empty();
+    liveGeolocation.innerHTML = '';
     ShowStations(someStations);
   } else if (someStations.length === 1 && someStations[0] != null) {
     const loc = {
@@ -184,77 +190,84 @@ function ShowStationsSubset(someStations, needle, allStations) {
   }
 }
 
-$(document).ready(function() {
-
+document.addEventListener("DOMContentLoaded", function () {
   // Load stations from API
-  $.ajax({
+  fetch(getLocationUrl(), {
     method: "POST",
-    url: getLocationUrl(),
-    data: JSON.stringify({
-      query: stationsQuery,
-    }),
     headers: {
-      Accept : "application/json; charset=utf-8",
-      "Content-Type": "application/json; charset=utf-8"
+      Accept: "application/json; charset=utf-8",
+      "Content-Type": "application/json; charset=utf-8",
     },
-    success : function(data) {
+    body: JSON.stringify({ query: stationsQuery }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
       data = data.data;
+      const metroList = document.getElementById("metro-list");
+
       // Show in list
-      $.each(data.stations, function(key, val) {
-        $('#metro-list').append(
-          $(`<li class="station" id="${val.id}">`).append(val.name));
+      data.stations.forEach(function (val) {
+        const station = document.createElement("li");
+        station.className = "station";
+        station.id = val.id;
+        station.innerHTML = val.name;
+        metroList.appendChild(station);
       });
 
       // Do we have lat/lon parameters?
-      if (getURLParameterValue("lat") !== "null" &&
-        getURLParameterValue("lon") !== "null" ) {
+      if (
+        getURLParameterValue("lat") !== "null" &&
+        getURLParameterValue("lon") !== "null"
+      ) {
         const loc = {
           coords: {
             latitude: getURLParameterValue("lat"),
-            longitude: getURLParameterValue("lon")
-          }
+            longitude: getURLParameterValue("lon"),
+          },
         };
         ShowClosest(loc);
       }
       // Do we have an ID parameter?
-      else if (getURLParameterValue('id') !== 'null') {
-        const id = getURLParameterValue('id').toUpperCase();
-        const foundStation = data.stations.find(station => station.id === id);
-        ShowStationsSubset([foundStation], id, data.stations)
+      else if (getURLParameterValue("id") !== "null") {
+        const id = getURLParameterValue("id").toUpperCase();
+        const foundStation = data.stations.find(function (station) {
+          return station.id === id;
+        });
+        ShowStationsSubset([foundStation], id, data.stations);
       }
       // Do we have multiple IDs parameter?
-      else if (getURLParameterValue('ids') !== 'null') {
-        const ids = getURLParameterValue('ids').split(',');
-        const filteredStations = data.stations.filter(
-          station => ids.includes(station.id)
-        );
+      else if (getURLParameterValue("ids") !== "null") {
+        const ids = getURLParameterValue("ids").split(",");
+        const filteredStations = data.stations.filter(function (station) {
+          return ids.includes(station.id);
+        });
         ShowStationsSubset(filteredStations, ids, data.stations);
       }
       // Do we have a name parameter?
-      else if (getURLParameterValue('name') !== 'null') {
-        const name = getURLParameterValue('name').toLowerCase();
-        const foundStation = data.stations.find(
-          station => station.name.toLowerCase().includes(name)
-        );
-        ShowStationsSubset([foundStation], name)
+      else if (getURLParameterValue("name") !== "null") {
+        const name = getURLParameterValue("name").toLowerCase();
+        const foundStation = data.stations.find(function (station) {
+          return station.name.toLowerCase().includes(name);
+        });
+        ShowStationsSubset([foundStation], name);
       }
       // Do we have a multiple names parameter?
-      else if (getURLParameterValue('names') !== 'null') {
-        const originalNames = getURLParameterValue('names');
-        const names = originalNames.toLowerCase().split(',');
-        const filteredStations = data.stations.filter(
-          station => names.includes(station.name.toLowerCase())
-        );
+      else if (getURLParameterValue("names") !== "null") {
+        const originalNames = getURLParameterValue("names");
+        const names = originalNames.toLowerCase().split(",");
+        const filteredStations = data.stations.filter(function (station) {
+          return names.includes(station.name.toLowerCase());
+        });
         ShowStationsSubset(filteredStations, originalNames);
       }
       // Otherwise boot up the satellites
       else if (geoPosition.init()) {
-        $("#live-geolocation").html('Checking...');
+        const liveGeolocation = document.getElementById("live-geolocation");
+        liveGeolocation.innerHTML = "Checking...";
         lookupLocation();
       } else {
-        $("#live-geolocation").html('Dunno.');
+        const liveGeolocation = document.getElementById("live-geolocation");
+        liveGeolocation.innerHTML = "Dunno.";
       }
-
-    } });
-
+    });
 });
