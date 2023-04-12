@@ -1,5 +1,7 @@
-const HELSINKI_URL = "https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql" + API_KEY;
-const TURKU_URL = "https://api.digitransit.fi/routing/v1/routers/waltti/index/graphql" + API_KEY;
+const HELSINKI_URL =
+  "https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql" + API_KEY;
+const TURKU_URL =
+  "https://api.digitransit.fi/routing/v1/routers/waltti/index/graphql" + API_KEY;
 
 const stationsQuery = `query {
   stations: bikeRentalStations {
@@ -39,18 +41,18 @@ const nearestQuery = `query($lat: Float!, $lon: Float!) {
 
 function getURLParameterValue(name) {
   const param = decodeURI(
-    (RegExp(name + '=' + '(.+?)(&|$)', 'i').exec(location.search)||[,null])[1]
+    (RegExp(name + "=" + "(.+?)(&|$)", "i").exec(location.search) || [, null])[1],
   );
   // Strip any trailing slash
-  return param.replace(/\/$/, '');
+  return param.replace(/\/$/, "");
 }
 
 function getURLParameterField(name) {
   const param = decodeURI(
-    (RegExp(name + '(&|$)', 'i').exec(location.search)||[,null])[1]
+    (RegExp(name + "(&|$)", "i").exec(location.search) || [, null])[1],
   );
   // Strip any trailing slash
-  return param.replace(/\/$/, '');
+  return param.replace(/\/$/, "");
 }
 
 function distanceBetweenLocAndStation(loc, station) {
@@ -58,9 +60,9 @@ function distanceBetweenLocAndStation(loc, station) {
     loc.coords.latitude,
     loc.coords.longitude,
     station.y,
-    station.x);
+    station.x,
+  );
 }
-
 
 function getLocationUrl() {
   // Helsinki or Turku?
@@ -80,7 +82,7 @@ function ShowClosest(loc) {
     },
   };
   const headers = {
-    "Accept": "application/json; charset=utf-8",
+    Accept: "application/json; charset=utf-8",
     "Content-Type": "application/json; charset=utf-8",
   };
 
@@ -89,32 +91,33 @@ function ShowClosest(loc) {
     headers: headers,
     body: JSON.stringify(data),
   })
-  .then(response => response.json())
-  .then(data => {
-    const stations = data.data.nearest.edges.map((edge, index) => {
-      edge.node.place.geodesic_distance = Math.round(distanceBetweenLocAndStation(loc, edge.node.place));
-      edge.node.place.distance = edge.node.distance;
-      return edge.node.place;
-    });
+    .then((response) => response.json())
+    .then((data) => {
+      const stations = data.data.nearest.edges.map((edge, index) => {
+        edge.node.place.geodesic_distance = Math.round(
+          distanceBetweenLocAndStation(loc, edge.node.place),
+        );
+        edge.node.place.distance = edge.node.distance;
+        return edge.node.place;
+      });
 
-    document.getElementById("live-geolocation").innerHTML = '&nbsp;';
-    ShowMap(loc, document.getElementById("map"));
-    ShowStations(stations);
-  })
-  .catch(error => console.error("Error fetching nearest stations:", error));
+      document.getElementById("live-geolocation").innerHTML = "&nbsp;";
+      ShowMap(loc, document.getElementById("map"));
+      ShowStations(stations);
+    })
+    .catch((error) => console.error("Error fetching nearest stations:", error));
 }
 
-
 function ShowStations(stations) {
-  const ul = document.querySelector('ul');
+  const ul = document.querySelector("ul");
 
   // Reset list
-  ul.innerHTML = '';
+  ul.innerHTML = "";
 
   // Update list
-  stations.forEach(function(val, key) {
+  stations.forEach(function (val, key) {
     const totalSlots = val.bikesAvailable + val.spacesAvailable;
-    let slots = '';
+    let slots = "";
 
     for (let i = 0; i < val.bikesAvailable; i++) {
       slots += '<div class="city-bike-column available"></div>';
@@ -123,23 +126,23 @@ function ShowStations(stations) {
       slots += '<div class="city-bike-column"></div>';
     }
 
-    const distance = val.distance == null ? '' :
-      numberWithSpaces(val.distance) + '&nbsp;m ';
+    const distance =
+      val.distance == null ? "" : numberWithSpaces(val.distance) + "&nbsp;m ";
 
     const map_link = `https://www.google.com/maps/place/${val.y},${val.x}`;
-    const li = document.createElement('li');
-    li.classList.add('station');
-    li.setAttribute('id', val.id);
-    li.innerHTML = `<a target="citybike-map" href="${map_link}">${val.name}</a> ` +
+    const li = document.createElement("li");
+    li.classList.add("station");
+    li.setAttribute("id", val.id);
+    li.innerHTML =
+      `<a target="citybike-map" href="${map_link}">${val.name}</a> ` +
       `<span class="dist">${distance}${val.bikesAvailable}/${totalSlots}</span>` +
       `<div class="slots">${slots}</div>`;
     ul.appendChild(li);
   });
 }
 
-
 function ShowClosestError() {
-  document.getElementById('live-geolocation').innerHTML = 'Dunno closest.';
+  document.getElementById("live-geolocation").innerHTML = "Dunno closest.";
 }
 
 /**
@@ -148,17 +151,17 @@ function ShowClosestError() {
  * @param stations Optional. Include for IDs, omit for names.
  */
 function ShowNotFound(needle, stations) {
-  const liveGeolocation = document.getElementById('live-geolocation');
-  const ul = document.querySelector('ul');
+  const liveGeolocation = document.getElementById("live-geolocation");
+  const ul = document.querySelector("ul");
 
   if (stations == null) {
-    liveGeolocation.innerHTML = needle + ' not found. Available names:';
+    liveGeolocation.innerHTML = needle + " not found. Available names:";
   } else {
-    liveGeolocation.innerHTML = needle + ' not found. Available IDs:';
-    ul.innerHTML = '';
-    stations.forEach(function(val) {
-      const li = document.createElement('li');
-      li.classList.add('station');
+    liveGeolocation.innerHTML = needle + " not found. Available IDs:";
+    ul.innerHTML = "";
+    stations.forEach(function (val) {
+      const li = document.createElement("li");
+      li.classList.add("station");
       li.innerHTML = `${val.id} ${val.name}`;
       ul.appendChild(li);
     });
@@ -172,17 +175,17 @@ function ShowNotFound(needle, stations) {
  * @param allStations For error handling. Include for IDs, omit for names.
  */
 function ShowStationsSubset(someStations, needle, allStations) {
-  const liveGeolocation = document.getElementById('live-geolocation');
+  const liveGeolocation = document.getElementById("live-geolocation");
 
   if (someStations.length > 1) {
-    liveGeolocation.innerHTML = '';
+    liveGeolocation.innerHTML = "";
     ShowStations(someStations);
   } else if (someStations.length === 1 && someStations[0] != null) {
     const loc = {
       coords: {
         latitude: someStations[0].y,
         longitude: someStations[0].x,
-      }
+      },
     };
     ShowClosest(loc);
   } else {

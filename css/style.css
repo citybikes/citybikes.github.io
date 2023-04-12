@@ -2,7 +2,8 @@ html {
   overflow-y: scroll;
   -webkit-font-smoothing: antialiased;
 }
-html, body {
+html,
+body {
   background: black;
   color: white;
   font-family: Arial;
