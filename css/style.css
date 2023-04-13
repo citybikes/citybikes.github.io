@@ -2,7 +2,8 @@ html {
   overflow-y: scroll;
   -webkit-font-smoothing: antialiased;
 }
-html, body {
+html,
+body {
   background: black;
   color: white;
   font-family: Arial;
@@ -34,15 +35,6 @@ a:hover {
 }
 span.dist {
   font-size: 50%;
-}
-#textfill-container {
-  padding: 5px;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  text-align: center;
 }
 .info {
   margin: 10px;
