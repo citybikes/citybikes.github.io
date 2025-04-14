@@ -229,8 +229,8 @@ document.addEventListener("DOMContentLoaded", function () {
       ) {
         const loc = {
           coords: {
-            latitude: getURLParameterValue("lat"),
-            longitude: getURLParameterValue("lon"),
+            latitude: parseFloat(getURLParameterValue("lat")),
+            longitude: parseFloat(getURLParameterValue("lon")),
           },
         };
         ShowClosest(loc);
