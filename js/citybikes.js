@@ -1,7 +1,5 @@
-const HELSINKI_URL =
-  "https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql" + API_KEY;
-const TURKU_URL =
-  "https://api.digitransit.fi/routing/v1/routers/waltti/index/graphql" + API_KEY;
+const HELSINKI_URL = "https://api.digitransit.fi/routing/v2/hsl/gtfs/v1" + API_KEY;
+const TURKU_URL = "https://api.digitransit.fi/routing/v2/waltti/gtfs/v1" + API_KEY;
 
 const stationsQuery = `query {
   stations: bikeRentalStations {
@@ -116,6 +114,10 @@ function ShowStations(stations) {
 
   // Update list
   stations.forEach(function (val, key) {
+    if (!val.name) {
+      return; // ignore empty (non-BikeRentalStation) results
+    }
+
     const totalSlots = val.bikesAvailable + val.spacesAvailable;
     let slots = "";
 
@@ -210,6 +212,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Show in list
       data.stations.forEach(function (val) {
+        if (val.name === "SCOOTER") {
+          return; // ignore these non-bike "stations"
+        }
         const station = document.createElement("li");
         station.className = "station";
         station.id = val.id;
