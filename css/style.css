@@ -35,6 +35,11 @@ a:hover {
 }
 span.dist {
   font-size: 50%;
+  white-space: nowrap;
+}
+span.dist img {
+  vertical-align: text-top;
+  height: 0.93em;
 }
 .info {
   margin: 10px;

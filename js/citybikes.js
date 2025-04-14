@@ -128,16 +128,21 @@ function ShowStations(stations) {
       slots += '<div class="city-bike-column"></div>';
     }
 
+    const walkingIcon = '<img src="img/walking-icon.svg" alt="walking" />';
+
     const distance =
-      val.distance == null ? "" : numberWithSpaces(val.distance) + "&nbsp;m ";
+      val.distance == null
+        ? ""
+        : walkingIcon + "&nbsp;" + numberWithSpaces(val.distance) + "&nbsp;m";
 
     const map_link = `https://www.google.com/maps/place/${val.y},${val.x}`;
     const li = document.createElement("li");
     li.classList.add("station");
     li.setAttribute("id", val.id);
     li.innerHTML =
-      `<a target="citybike-map" href="${map_link}">${val.name}</a> ` +
-      `<span class="dist">${distance}${val.bikesAvailable}/${totalSlots}</span>` +
+      `<a target="citybike-map" href="${map_link}">${val.name}</a>` +
+      ` <span class="dist">${distance}</span>` +
+      ` <span class="dist">${val.bikesAvailable}/${totalSlots}</span>` +
       `<div class="slots">${slots}</div>`;
     ul.appendChild(li);
   });
