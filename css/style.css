@@ -57,8 +57,11 @@ span.dist {
   background: #eee;
 }
 #position-marker {
+  position: relative;
   width: 3em;
   height: 3em;
+  top: -1.5em;
+  left: -1.5em;
   stroke: black;
   stroke-width: 5;
 }
