@@ -1,7 +1,5 @@
-const HELSINKI_URL =
-  "https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql" + API_KEY;
-const TURKU_URL =
-  "https://api.digitransit.fi/routing/v1/routers/waltti/index/graphql" + API_KEY;
+const HELSINKI_URL = "https://api.digitransit.fi/routing/v2/hsl/gtfs/v1" + API_KEY;
+const TURKU_URL = "https://api.digitransit.fi/routing/v2/waltti/gtfs/v1" + API_KEY;
 
 const stationsQuery = `query {
   stations: bikeRentalStations {
@@ -116,6 +114,10 @@ function ShowStations(stations) {
 
   // Update list
   stations.forEach(function (val, key) {
+    if (!val.name) {
+      return; // ignore empty (non-BikeRentalStation) results
+    }
+
     const totalSlots = val.bikesAvailable + val.spacesAvailable;
     let slots = "";
 
@@ -126,16 +128,21 @@ function ShowStations(stations) {
       slots += '<div class="city-bike-column"></div>';
     }
 
+    const walkingIcon = '<img src="img/walking-icon.svg" alt="walking" />';
+
     const distance =
-      val.distance == null ? "" : numberWithSpaces(val.distance) + "&nbsp;m ";
+      val.distance == null
+        ? ""
+        : walkingIcon + "&nbsp;" + numberWithSpaces(val.distance) + "&nbsp;m";
 
     const map_link = `https://www.google.com/maps/place/${val.y},${val.x}`;
     const li = document.createElement("li");
     li.classList.add("station");
     li.setAttribute("id", val.id);
     li.innerHTML =
-      `<a target="citybike-map" href="${map_link}">${val.name}</a> ` +
-      `<span class="dist">${distance}${val.bikesAvailable}/${totalSlots}</span>` +
+      `<a target="citybike-map" href="${map_link}">${val.name}</a>` +
+      ` <span class="dist">${distance}</span>` +
+      ` <span class="dist">${val.bikesAvailable}/${totalSlots}</span>` +
       `<div class="slots">${slots}</div>`;
     ul.appendChild(li);
   });
@@ -210,6 +217,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Show in list
       data.stations.forEach(function (val) {
+        if (val.name === "SCOOTER") {
+          return; // ignore these non-bike "stations"
+        }
         const station = document.createElement("li");
         station.className = "station";
         station.id = val.id;
@@ -224,8 +234,8 @@ document.addEventListener("DOMContentLoaded", function () {
       ) {
         const loc = {
           coords: {
-            latitude: getURLParameterValue("lat"),
-            longitude: getURLParameterValue("lon"),
+            latitude: parseFloat(getURLParameterValue("lat")),
+            longitude: parseFloat(getURLParameterValue("lon")),
           },
         };
         ShowClosest(loc);

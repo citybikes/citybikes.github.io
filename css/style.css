@@ -35,6 +35,11 @@ a:hover {
 }
 span.dist {
   font-size: 50%;
+  white-space: nowrap;
+}
+span.dist img {
+  vertical-align: text-top;
+  height: 0.93em;
 }
 .info {
   margin: 10px;
@@ -57,8 +62,11 @@ span.dist {
   background: #eee;
 }
 #position-marker {
+  position: relative;
   width: 3em;
   height: 3em;
+  top: -1.5em;
+  left: -1.5em;
   stroke: black;
   stroke-width: 5;
 }
